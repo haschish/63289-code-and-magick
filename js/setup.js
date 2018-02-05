@@ -1,4 +1,5 @@
 'use strict';
+var blockSetup = document.querySelector('.setup');
 var NAMES = [
   'Иван',
   'Хуан Субастьян',
@@ -82,9 +83,8 @@ var getFragmentWizards = function (array) {
   return fragment;
 };
 
-var blockSetup = document.querySelector('.setup');
+
 blockSetup.classList.remove('hidden');
-var persons = generatePersons(4);
-var fragmentWizards = getFragmentWizards(persons);
+var fragmentWizards = getFragmentWizards( generatePersons(4) );
 blockSetup.querySelector('.setup-similar-list').appendChild(fragmentWizards);
 blockSetup.querySelector('.setup-similar').classList.remove('hidden');
