@@ -85,6 +85,6 @@ var getFragmentWizards = function (array) {
 
 
 blockSetup.classList.remove('hidden');
-var fragmentWizards = getFragmentWizards( generatePersons(4) );
+var fragmentWizards = getFragmentWizards(generatePersons(4));
 blockSetup.querySelector('.setup-similar-list').appendChild(fragmentWizards);
 blockSetup.querySelector('.setup-similar').classList.remove('hidden');
