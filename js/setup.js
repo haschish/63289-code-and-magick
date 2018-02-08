@@ -35,6 +35,15 @@ var EYES_COLORS = [
   'yellow',
   'green'
 ];
+var FIREBALL_COLORS = [
+  '#ee4830',
+  '#30a8ee',
+  '#5ce6c0',
+  '#e848d5',
+  '#e6e848'
+];
+var ENTER_KEYCODE = 13;
+var ESC_KEYCODE = 27;
 
 var getRandomItem = function (array, exclude) {
   if (exclude && exclude.length) {
@@ -83,8 +92,60 @@ var getFragmentWizards = function (array) {
   return fragment;
 };
 
+var onBlockSetupEscKeydown = function (evt) {
+  if (evt.keyCode === ESC_KEYCODE && evt.target !== setupUserName) {
+    closeBlockSetup();
+  }
+};
 
-blockSetup.classList.remove('hidden');
+var openBlockSetup = function () {
+  blockSetup.classList.remove('hidden');
+  document.addEventListener('keydown', onBlockSetupEscKeydown);
+};
+
+var closeBlockSetup = function () {
+  blockSetup.classList.add('hidden');
+  document.removeEventListener('keydown', onBlockSetupEscKeydown);
+};
+
+
+var setupOpenIcon = document.querySelector('.setup-open-icon');
+var setupClose = blockSetup.querySelector('.setup-close');
 var fragmentWizards = getFragmentWizards(generatePersons(4));
+var setupUserName = blockSetup.querySelector('.setup-user-name');
+var setupWizardCoat = blockSetup.querySelector('.setup-wizard .wizard-coat');
+var setupWizardEyes = blockSetup.querySelector('.setup-wizard .wizard-eyes');
+var setupFireballWrap = blockSetup.querySelector('.setup-fireball-wrap');
+
 blockSetup.querySelector('.setup-similar-list').appendChild(fragmentWizards);
 blockSetup.querySelector('.setup-similar').classList.remove('hidden');
+
+setupOpenIcon.addEventListener('click', function () {
+  openBlockSetup();
+});
+document.addEventListener('keydown', function (evt) {
+  if (evt.keyCode !== ENTER_KEYCODE) {
+    return;
+  }
+
+  var classList = evt.target.classList;
+  if (classList.contains('setup-open-icon')) {
+    openBlockSetup();
+  } else if (classList.contains('setup-close')) {
+    closeBlockSetup();
+  }
+});
+setupClose.addEventListener('click', function () {
+  closeBlockSetup();
+});
+setupWizardCoat.addEventListener('click', function () {
+  var currentFill = setupWizardCoat.style.fill;
+  setupWizardCoat.style.fill = getRandomItem(COAT_COLORS, [currentFill]);
+});
+setupWizardEyes.addEventListener('click', function () {
+  var currentFill = setupWizardEyes.style.fill;
+  setupWizardEyes.style.fill = getRandomItem(EYES_COLORS, [currentFill]);
+});
+setupFireballWrap.addEventListener('click', function () {
+  setupFireballWrap.style.backgroundColor = getRandomItem(FIREBALL_COLORS);
+});
