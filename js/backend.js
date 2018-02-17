@@ -1,13 +1,12 @@
 'use strict';
 (function () {
-  var URL_SAVE = 'https://js.dump.academy/code-and-magick';
   var createXHR = function (onLoad, onError) {
     var xhr = new XMLHttpRequest();
     xhr.responseType = 'json';
     xhr.timeout = 10000;
 
     xhr.addEventListener('load', function () {
-      if(xhr.status === 200) {
+      if (xhr.status === 200) {
         onLoad(xhr.response);
       } else {
         onError(xhr.status + ' ' + xhr.statusText);
@@ -40,5 +39,5 @@
   window.backend = {
     load: load,
     save: save
-  }
+  };
 })();

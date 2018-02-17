@@ -1,18 +1,5 @@
 'use strict';
 (function () {
-  var generatePersons = function (num) {
-    var persons = [];
-    for (var i = 0; i < num; i++) {
-      persons.push({
-        name: window.utils.getRandomItem(window.consts.NAMES) + ' ' + window.utils.getRandomItem(window.consts.SURNAMES),
-        coatColor: window.utils.getRandomItem(window.consts.COAT_COLORS, window.utils.getValuesOf(persons, 'coatColor')),
-        eyesColor: window.utils.getRandomItem(window.consts.EYES_COLORS, window.utils.getValuesOf(persons, 'eyesColor'))
-      });
-    }
-
-    return persons;
-  };
-
   var getFragmentWizards = function (array) {
     var wizard = document.querySelector('#similar-wizard-template').content;
     var fragment = document.createDocumentFragment();
@@ -39,7 +26,7 @@
 
   var onLoadData = function (data) {
     var wizards = [];
-    for(var i = 0; i < 4; i++) {
+    for (var i = 0; i < 4; i++) {
       wizards.push(window.utils.getRandomItem(data, wizards));
     }
 
@@ -49,7 +36,26 @@
   };
 
   var onErrorBackend = function (msg) {
-    alert(msg);
+    var node = document.querySelector('.error-backend');
+    if (!node) {
+      node = document.createElement('div');
+      node.classList.add('error-backend');
+      node.style = 'z-index: 100; margin 0 auto; text-align: center; background-color: red;';
+      node.style.position = 'absolute';
+      node.style.left = 0;
+      node.style.right = 0;
+      node.style.fontSize = '30px';
+      document.body.insertAdjacentElement('afterbegin', node);
+    }
+
+    node.textContent = msg;
+  };
+
+  var removeErrorBackend = function () {
+    var node = document.querySelector('.error-backend');
+    if (node) {
+      document.removeChild(node);
+    }
   };
 
   var blockSetup = document.querySelector('.setup');
@@ -62,7 +68,7 @@
   var setupForm = blockSetup.querySelector('form');
   var draggedItem = null;
 
-  backend.load(onLoadData, onErrorBackend);
+  window.backend.load(onLoadData, onErrorBackend);
 
   // blockSetup.querySelector('.setup-similar-list').appendChild(fragmentWizards);
   // blockSetup.querySelector('.setup-similar').classList.remove('hidden');
@@ -112,17 +118,12 @@
 
   setupForm.addEventListener('submit', function (evt) {
     evt.preventDefault();
+    removeErrorBackend();
     var data = new FormData(setupForm);
     var onLoad = function () {
-
+      window.dialog.close();
     };
-    backend.save(
-      data,
-      function () {
-        window.dialog.close();
-      },
-      onErrorBackend
-    );
+    window.backend.save(data, onLoad, onErrorBackend);
   });
 })();
 
