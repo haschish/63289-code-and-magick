@@ -21,8 +21,8 @@
       var clone = wizard.cloneNode(true);
 
       clone.querySelector('.setup-similar-label').textContent = item.name;
-      clone.querySelector('.wizard-coat').style.fill = item.coatColor;
-      clone.querySelector('.wizard-eyes').style.fill = item.eyesColor;
+      clone.querySelector('.wizard-coat').style.fill = item.colorCoat;
+      clone.querySelector('.wizard-eyes').style.fill = item.colorEyes;
 
       fragment.appendChild(clone);
     });
@@ -37,17 +37,35 @@
     });
   };
 
+  var onLoadData = function (data) {
+    var wizards = [];
+    for(var i = 0; i < 4; i++) {
+      wizards.push(window.utils.getRandomItem(data, wizards));
+    }
+
+    var fragmentWizards = getFragmentWizards(wizards);
+    blockSetup.querySelector('.setup-similar-list').appendChild(fragmentWizards);
+    blockSetup.querySelector('.setup-similar').classList.remove('hidden');
+  };
+
+  var onErrorBackend = function (msg) {
+    alert(msg);
+  };
+
   var blockSetup = document.querySelector('.setup');
-  var fragmentWizards = getFragmentWizards(generatePersons(4));
+  // var fragmentWizards = getFragmentWizards(generatePersons(4));
   var setupWizardCoat = blockSetup.querySelector('.setup-wizard .wizard-coat');
   var setupWizardEyes = blockSetup.querySelector('.setup-wizard .wizard-eyes');
   var setupFireballWrap = blockSetup.querySelector('.setup-fireball-wrap');
   var setupArtifactsShop = blockSetup.querySelector('.setup-artifacts-shop');
   var setupArtifacts = blockSetup.querySelector('.setup-artifacts');
+  var setupForm = blockSetup.querySelector('form');
   var draggedItem = null;
 
-  blockSetup.querySelector('.setup-similar-list').appendChild(fragmentWizards);
-  blockSetup.querySelector('.setup-similar').classList.remove('hidden');
+  backend.load(onLoadData, onErrorBackend);
+
+  // blockSetup.querySelector('.setup-similar-list').appendChild(fragmentWizards);
+  // blockSetup.querySelector('.setup-similar').classList.remove('hidden');
 
   setupWizardCoat.addEventListener('click', function () {
     var currentFill = setupWizardCoat.style.fill;
@@ -90,6 +108,21 @@
   setupArtifacts.addEventListener('dragleave', function (evt) {
     evt.preventDefault();
     evt.target.style.backgroundColor = '';
+  });
+
+  setupForm.addEventListener('submit', function (evt) {
+    evt.preventDefault();
+    var data = new FormData(setupForm);
+    var onLoad = function () {
+
+    };
+    backend.save(
+      data,
+      function () {
+        window.dialog.close();
+      },
+      onErrorBackend
+    );
   });
 })();
 
