@@ -40,11 +40,6 @@
     if (!node) {
       node = document.createElement('div');
       node.classList.add('error-backend');
-      node.style = 'z-index: 100; margin 0 auto; text-align: center; background-color: red;';
-      node.style.position = 'absolute';
-      node.style.left = 0;
-      node.style.right = 0;
-      node.style.fontSize = '30px';
       document.body.insertAdjacentElement('afterbegin', node);
     }
 
@@ -54,12 +49,11 @@
   var removeErrorBackend = function () {
     var node = document.querySelector('.error-backend');
     if (node) {
-      document.removeChild(node);
+      document.body.removeChild(node);
     }
   };
 
   var blockSetup = document.querySelector('.setup');
-  // var fragmentWizards = getFragmentWizards(generatePersons(4));
   var setupWizardCoat = blockSetup.querySelector('.setup-wizard .wizard-coat');
   var setupWizardEyes = blockSetup.querySelector('.setup-wizard .wizard-eyes');
   var setupFireballWrap = blockSetup.querySelector('.setup-fireball-wrap');
@@ -70,8 +64,6 @@
 
   window.backend.load(onLoadData, onErrorBackend);
 
-  // blockSetup.querySelector('.setup-similar-list').appendChild(fragmentWizards);
-  // blockSetup.querySelector('.setup-similar').classList.remove('hidden');
 
   setupWizardCoat.addEventListener('click', function () {
     var currentFill = setupWizardCoat.style.fill;
