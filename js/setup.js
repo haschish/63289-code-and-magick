@@ -1,18 +1,5 @@
 'use strict';
 (function () {
-  var generatePersons = function (num) {
-    var persons = [];
-    for (var i = 0; i < num; i++) {
-      persons.push({
-        name: window.utils.getRandomItem(window.consts.NAMES) + ' ' + window.utils.getRandomItem(window.consts.SURNAMES),
-        coatColor: window.utils.getRandomItem(window.consts.COAT_COLORS, window.utils.getValuesOf(persons, 'coatColor')),
-        eyesColor: window.utils.getRandomItem(window.consts.EYES_COLORS, window.utils.getValuesOf(persons, 'eyesColor'))
-      });
-    }
-
-    return persons;
-  };
-
   var getFragmentWizards = function (array) {
     var wizard = document.querySelector('#similar-wizard-template').content;
     var fragment = document.createDocumentFragment();
@@ -21,8 +8,8 @@
       var clone = wizard.cloneNode(true);
 
       clone.querySelector('.setup-similar-label').textContent = item.name;
-      clone.querySelector('.wizard-coat').style.fill = item.coatColor;
-      clone.querySelector('.wizard-eyes').style.fill = item.eyesColor;
+      clone.querySelector('.wizard-coat').style.fill = item.colorCoat;
+      clone.querySelector('.wizard-eyes').style.fill = item.colorEyes;
 
       fragment.appendChild(clone);
     });
@@ -37,17 +24,46 @@
     });
   };
 
+  var onLoadData = function (data) {
+    var wizards = [];
+    for (var i = 0; i < 4; i++) {
+      wizards.push(window.utils.getRandomItem(data, wizards));
+    }
+
+    var fragmentWizards = getFragmentWizards(wizards);
+    blockSetup.querySelector('.setup-similar-list').appendChild(fragmentWizards);
+    blockSetup.querySelector('.setup-similar').classList.remove('hidden');
+  };
+
+  var onErrorBackend = function (msg) {
+    var node = document.querySelector('.error-backend');
+    if (!node) {
+      node = document.createElement('div');
+      node.classList.add('error-backend');
+      document.body.insertAdjacentElement('afterbegin', node);
+    }
+
+    node.textContent = msg;
+  };
+
+  var removeErrorBackend = function () {
+    var node = document.querySelector('.error-backend');
+    if (node) {
+      document.body.removeChild(node);
+    }
+  };
+
   var blockSetup = document.querySelector('.setup');
-  var fragmentWizards = getFragmentWizards(generatePersons(4));
   var setupWizardCoat = blockSetup.querySelector('.setup-wizard .wizard-coat');
   var setupWizardEyes = blockSetup.querySelector('.setup-wizard .wizard-eyes');
   var setupFireballWrap = blockSetup.querySelector('.setup-fireball-wrap');
   var setupArtifactsShop = blockSetup.querySelector('.setup-artifacts-shop');
   var setupArtifacts = blockSetup.querySelector('.setup-artifacts');
+  var setupForm = blockSetup.querySelector('form');
   var draggedItem = null;
 
-  blockSetup.querySelector('.setup-similar-list').appendChild(fragmentWizards);
-  blockSetup.querySelector('.setup-similar').classList.remove('hidden');
+  window.backend.load(onLoadData, onErrorBackend);
+
 
   setupWizardCoat.addEventListener('click', function () {
     var currentFill = setupWizardCoat.style.fill;
@@ -90,6 +106,16 @@
   setupArtifacts.addEventListener('dragleave', function (evt) {
     evt.preventDefault();
     evt.target.style.backgroundColor = '';
+  });
+
+  setupForm.addEventListener('submit', function (evt) {
+    evt.preventDefault();
+    removeErrorBackend();
+    var data = new FormData(setupForm);
+    var onLoad = function () {
+      window.dialog.close();
+    };
+    window.backend.save(data, onLoad, onErrorBackend);
   });
 })();
 

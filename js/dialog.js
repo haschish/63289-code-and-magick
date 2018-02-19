@@ -83,4 +83,8 @@
     document.addEventListener('mousemove', onDocumentMousemove);
     document.addEventListener('mouseup', onDocumentMouseup);
   });
+
+  window.dialog = {
+    close: closeBlockSetup
+  };
 })();
