@@ -1,5 +1,18 @@
 'use strict';
 (function () {
+  var debounce = function (fun, ms) {
+    var timer;
+    return function () {
+      if (timer) {
+        clearTimeout(timer)
+      }
+      timer = setTimeout(function () {
+        fun.apply(this, arguments);
+        timer = null;
+      }, ms);
+    };
+  };
+
   var getRandomItem = function (array, exclude) {
     if (exclude && exclude.length) {
       array = array.filter(function (item) {
@@ -19,6 +32,7 @@
 
   window.utils = {
     getRandomItem: getRandomItem,
-    getValuesOf: getValuesOf
+    getValuesOf: getValuesOf,
+    debounce: debounce
   };
 })();
