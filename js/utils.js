@@ -4,12 +4,9 @@
     var timer;
     return function () {
       if (timer) {
-        clearTimeout(timer)
+        clearTimeout(timer);
       }
-      timer = setTimeout(function () {
-        fun.apply(this, arguments);
-        timer = null;
-      }, ms);
+      timer = setTimeout(fun, ms);
     };
   };
 
